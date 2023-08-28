@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: ${H2URL}
+    username: ${H2USER}
+    password: ${H2PASSWORD}
+    driverClassName: org.h2.Driver
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
