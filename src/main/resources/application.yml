@@ -1,6 +1,6 @@
 spring:
   config:
-    import: classpath:secret.yml
+    import: optional:classpath:secret.yml
   datasource:
     driver-class-name: org.postgresql.Driver
   jpa:
