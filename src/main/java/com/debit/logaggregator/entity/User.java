@@ -1,4 +1,4 @@
-package com.deneb.logaggregator.entity;
+package com.debit.logaggregator.entity;
 
 import jakarta.persistence.*;
 

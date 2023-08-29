@@ -1,7 +1,7 @@
-package com.deneb.logaggregator.service;
+package com.debit.logaggregator.service;
 
-import com.deneb.logaggregator.entity.User;
-import com.deneb.logaggregator.repository.UserRepository;
+import com.debit.logaggregator.repository.UserRepository;
+import com.debit.logaggregator.entity.User;
 import graphql.com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

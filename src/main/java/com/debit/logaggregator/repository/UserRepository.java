@@ -1,10 +1,9 @@
-package com.deneb.logaggregator.repository;
+package com.debit.logaggregator.repository;
 
-import com.deneb.logaggregator.entity.User;
+import com.debit.logaggregator.entity.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.UUID;
 
 @Repository

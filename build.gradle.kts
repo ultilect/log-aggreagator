@@ -6,7 +6,7 @@ plugins {
     id("org.graalvm.buildtools.native") version "0.9.24"
 }
 
-group = "com.deneb"
+group = "com.debit"
 version = "0.0.1-SNAPSHOT"
 
 java {

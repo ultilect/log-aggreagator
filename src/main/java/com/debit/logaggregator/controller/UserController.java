@@ -1,11 +1,9 @@
-package com.deneb.logaggregator.controller;
+package com.debit.logaggregator.controller;
 
-import com.deneb.logaggregator.dto.UserDTO;
-import com.deneb.logaggregator.entity.User;
-import com.deneb.logaggregator.service.UserService;
+import com.debit.logaggregator.dto.UserDTO;
+import com.debit.logaggregator.service.UserService;
+import com.debit.logaggregator.entity.User;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +32,7 @@ public class UserController {
     @GetMapping(path = "all", produces = APPLICATION_JSON_VALUE)
     public List<UserDTO> findAllUsers() {
         List<User> users = this.userService.findAllUsers();
-        return users.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return users.stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
     private UserDTO convertToDTO(User user) {

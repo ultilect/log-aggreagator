@@ -1,4 +1,4 @@
-package com.deneb.logaggregator;
+package com.debit.logaggregator;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.deneb.logaggregator;
+package com.debit.logaggregator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

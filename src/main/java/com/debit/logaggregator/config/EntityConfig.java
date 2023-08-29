@@ -1,4 +1,4 @@
-package com.deneb.logaggregator.config;
+package com.debit.logaggregator.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
