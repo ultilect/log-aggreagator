@@ -3,7 +3,6 @@ package com.debit.logaggregator.controller;
 import com.debit.logaggregator.dto.UserDTO;
 import com.debit.logaggregator.service.UserService;
 import com.debit.logaggregator.entity.User;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,16 +12,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+/**
+ * Контроллер для работы с пользователем.
+ * @author Bogdan Lesin
+ */
 @RestController
 @RequestMapping("user")
 public class UserController {
     private final UserService userService;
-    private final ModelMapper modelMapper;
 
-    @Autowired()
-    public UserController(UserService userService, ModelMapper modelMapper) {
+    @Autowired
+    public UserController(final UserService userService) {
         this.userService = userService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/")
@@ -31,12 +33,8 @@ public class UserController {
     }
     @GetMapping(path = "all", produces = APPLICATION_JSON_VALUE)
     public List<UserDTO> findAllUsers() {
-        List<User> users = this.userService.findAllUsers();
+        final List<User> users = this.userService.findAllUsers();
         return users.stream().map(UserDTO::new).collect(Collectors.toList());
-    }
-
-    private UserDTO convertToDTO(User user) {
-        return this.modelMapper.map(user, UserDTO.class);
     }
 
 }

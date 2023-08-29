@@ -4,6 +4,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.3"
     id("org.hibernate.orm") version "6.2.7.Final"
     id("org.graalvm.buildtools.native") version "0.9.24"
+    id("ru.vyarus.quality") version "4.9.0"
 }
 
 group = "com.debit"

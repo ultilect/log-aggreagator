@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author Bogdan Lesin
+ */
 @Service
 public class UserService {
     private final UserRepository userRepository;

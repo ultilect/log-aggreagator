@@ -6,6 +6,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
+/**
+ *  Контроллер для проверки эндпоинтов. Должен быть удален в проде.
+ * @author Bogdan Lesin
+ */
 @RestController
 @RequestMapping("test")
 public class TestController {
