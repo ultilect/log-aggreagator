@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,10 +28,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
-    public String check() {
-        return "check";
+    @GetMapping
+    public String getUser(Principal principal) {
+        if(principal == null) {
+            return null;
+        }
+        return principal.getName();
     }
+
     @GetMapping(path = "all", produces = APPLICATION_JSON_VALUE)
     public List<UserDTO> findAllUsers() {
         final List<User> users = this.userService.findAllUsers();
