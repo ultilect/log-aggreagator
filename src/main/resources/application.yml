@@ -1,9 +1,10 @@
 spring:
+  config:
+    import: classpath:secret.yml
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${PGURL}
-    username: ${PGUSER}
-    password: ${PGPASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update

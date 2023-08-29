@@ -13,7 +13,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/test").permitAll()
+                        .requestMatchers("/", "/test", "/user", "/user/all").permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }
