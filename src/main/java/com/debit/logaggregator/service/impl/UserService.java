@@ -1,4 +1,4 @@
-package com.debit.logaggregator.service;
+package com.debit.logaggregator.service.impl;
 
 import com.debit.logaggregator.repository.UserRepository;
 import com.debit.logaggregator.entity.User;

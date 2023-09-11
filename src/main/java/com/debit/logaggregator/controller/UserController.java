@@ -1,7 +1,7 @@
 package com.debit.logaggregator.controller;
 
 import com.debit.logaggregator.dto.UserDTO;
-import com.debit.logaggregator.service.UserService;
+import com.debit.logaggregator.service.impl.UserService;
 import com.debit.logaggregator.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

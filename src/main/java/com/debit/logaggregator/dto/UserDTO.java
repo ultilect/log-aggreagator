@@ -13,13 +13,14 @@ import java.util.UUID;
  */
 public record UserDTO(
         @JsonProperty("id") UUID id,
+        @JsonProperty("username") String username,
         @JsonProperty("email") String email,
         @JsonProperty("phone") String phone
         ) {
         public UserDTO() {
-                this(UUID.randomUUID(), "test@email.com", "88889988");
+                this(UUID.randomUUID(), "test","test@email.com", "88889988");
         }
         public UserDTO(final User user) {
-                this(user.getId(), user.getEmail(), user.getPhone());
+                this(user.getId(), user.getUsername(), user.getEmail(), user.getPhone());
         }
 }
