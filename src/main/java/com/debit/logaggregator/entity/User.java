@@ -1,7 +1,6 @@
 package com.debit.logaggregator.entity;
 
 import jakarta.persistence.*;
-import org.springframework.security.core.parameters.P;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -62,7 +61,7 @@ public class User {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 

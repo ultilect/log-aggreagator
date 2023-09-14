@@ -8,6 +8,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/**
+ * JWT util.
+ * @author Bogdan Lesin
+ */
 @Component
 public class JwtCore {
     @Value("${app.secrets.jwt.secret}")
@@ -16,8 +20,8 @@ public class JwtCore {
     @Value("${app.secrets.jwt.lifetime}")
     private Integer lifetime;
 
-    public String generate(Authentication authentication) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+    public String generate(final Authentication authentication) {
+        final UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
@@ -26,7 +30,7 @@ public class JwtCore {
                 .compact();
     }
 
-    public String getNameFromJwt(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJwt(token).getBody().getSubject();
+    public String getNameFromJwt(final String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 }

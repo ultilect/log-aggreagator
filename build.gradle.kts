@@ -24,6 +24,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("org.modelmapper:modelmapper:3.1.1")
     implementation("org.postgresql:postgresql")
     testImplementation("com.h2database:h2")

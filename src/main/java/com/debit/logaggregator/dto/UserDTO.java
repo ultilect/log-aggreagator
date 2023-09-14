@@ -8,6 +8,7 @@ import java.util.UUID;
  * Формат пользователя, возвращаемый клиенту.
  * @author Bogdan Lesin
  * @param id id пользователя
+ * @param username логин пользователя
  * @param email почта пользователя
  * @param phone номер телефона пользователя(необязательно)
  */
@@ -18,7 +19,7 @@ public record UserDTO(
         @JsonProperty("phone") String phone
         ) {
         public UserDTO() {
-                this(UUID.randomUUID(), "test","test@email.com", "88889988");
+                this(UUID.randomUUID(), "test", "test@email.com", "88889988");
         }
         public UserDTO(final User user) {
                 this(user.getId(), user.getUsername(), user.getEmail(), user.getPhone());

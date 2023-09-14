@@ -29,8 +29,8 @@ public class UserController {
     }
 
     @GetMapping
-    public String getUser(Principal principal) {
-        if(principal == null) {
+    public String getUser(final Principal principal) {
+        if (principal == null) {
             return null;
         }
         return principal.getName();

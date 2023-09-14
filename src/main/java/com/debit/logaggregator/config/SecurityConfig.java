@@ -1,6 +1,5 @@
 package com.debit.logaggregator.config;
 
-import com.debit.logaggregator.security.JwtCore;
 import com.debit.logaggregator.security.TokenFilter;
 import com.debit.logaggregator.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +25,12 @@ import org.springframework.web.cors.CorsConfiguration;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    final private UserService userService;
-    final private JwtCore jwtCore;
-    final private TokenFilter tokenFilter;
+    private final UserService userService;
+
+    private final TokenFilter tokenFilter;
     @Autowired
-    SecurityConfig(UserService userService, JwtCore jwtCore, TokenFilter tokenFilter) {
+    SecurityConfig(final UserService userService, final TokenFilter tokenFilter) {
         this.userService = userService;
-        this.jwtCore = jwtCore;
         this.tokenFilter = tokenFilter;
     }
     @Bean
@@ -64,13 +62,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(final AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
     @Primary
-    public AuthenticationManagerBuilder configureAuthenticationManagerBuilder(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    public AuthenticationManagerBuilder configureAuthenticationManagerBuilder(
+            final AuthenticationManagerBuilder authenticationManagerBuilder
+    ) throws Exception {
         authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
         return authenticationManagerBuilder;
     }
