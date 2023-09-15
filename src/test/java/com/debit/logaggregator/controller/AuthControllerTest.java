@@ -1,6 +1,8 @@
 package com.debit.logaggregator.controller;
 
 import com.debit.logaggregator.dto.RestApiError;
+import com.debit.logaggregator.dto.SignUpDTO;
+import com.debit.logaggregator.dto.UserDTO;
 import com.debit.logaggregator.entity.User;
 import com.debit.logaggregator.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -21,6 +25,8 @@ public class AuthControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private final TestRestTemplate testRestTemplate = new TestRestTemplate();
 
     @BeforeEach
@@ -28,10 +34,13 @@ public class AuthControllerTest {
         userRepository.deleteAll();
     }
 
+    //================================================================================
+    // /auth/signup endpoint tests
+    //================================================================================
     @Test
     void signUpNewUserOk() {
         final User user = createTestUser();
-        HttpEntity<User> request = new HttpEntity<>(user);
+        HttpEntity<SignUpDTO> request = new HttpEntity<>(new SignUpDTO(user.getUsername(), user.getEmail(), user.getPhone(), user.getPassword()));
         ResponseEntity<String> responce =
                this.testRestTemplate.postForEntity(
                         String.format("http://localhost:%d/auth/signup",this.port),
@@ -49,7 +58,7 @@ public class AuthControllerTest {
         sameUser.setUsername(user.getUsername());
         userRepository.save(user);
 
-        HttpEntity<User> request = new HttpEntity<>(sameUser);
+        HttpEntity<SignUpDTO> request = new HttpEntity<>(new SignUpDTO(sameUser.getUsername(), sameUser.getEmail(), sameUser.getPhone(), sameUser.getPassword()));
         ResponseEntity<RestApiError> responce =
                 this.testRestTemplate.postForEntity(
                         String.format("http://localhost:%d/auth/signup",this.port),
@@ -72,7 +81,7 @@ public class AuthControllerTest {
         sameUser.setEmail(user.getEmail());
         userRepository.save(user);
 
-        HttpEntity<User> request = new HttpEntity<>(sameUser);
+        HttpEntity<SignUpDTO> request = new HttpEntity<>(new SignUpDTO(sameUser.getUsername(), sameUser.getEmail(), sameUser.getPhone(), sameUser.getPassword()));
         ResponseEntity<RestApiError> responce =
                 this.testRestTemplate.postForEntity(
                         String.format("http://localhost:%d/auth/signup",this.port),
@@ -95,7 +104,7 @@ public class AuthControllerTest {
         sameUser.setPhone(user.getPhone());
         userRepository.save(user);
 
-        HttpEntity<User> request = new HttpEntity<>(sameUser);
+        HttpEntity<SignUpDTO> request = new HttpEntity<>(new SignUpDTO(sameUser.getUsername(), sameUser.getEmail(), sameUser.getPhone(), sameUser.getPassword()));
         ResponseEntity<RestApiError> responce =
                 this.testRestTemplate.postForEntity(
                         String.format("http://localhost:%d/auth/signup",this.port),
@@ -115,7 +124,7 @@ public class AuthControllerTest {
     void signUpWhenPasswordIsNull() {
         final User user = createTestUser();
         user.setPassword(null);
-        HttpEntity<User> request = new HttpEntity<>(user);
+        HttpEntity<SignUpDTO> request = new HttpEntity<>(new SignUpDTO(user.getUsername(), user.getEmail(), user.getPhone(), user.getPassword()));
         ResponseEntity<RestApiError> responce =
                 this.testRestTemplate.postForEntity(
                         String.format("http://localhost:%d/auth/signup",this.port),
@@ -134,7 +143,7 @@ public class AuthControllerTest {
     void signUpWhenUsernameIsNull() {
         final User user = createTestUser();
         user.setUsername(null);
-        HttpEntity<User> request = new HttpEntity<>(user);
+        HttpEntity<SignUpDTO> request = new HttpEntity<>(new SignUpDTO(user.getUsername(), user.getEmail(), user.getPhone(), user.getPassword()));
         ResponseEntity<RestApiError> responce =
                 this.testRestTemplate.postForEntity(
                         String.format("http://localhost:%d/auth/signup",this.port),
@@ -153,7 +162,7 @@ public class AuthControllerTest {
     void signUpWhenEmailIsNull() {
         final User user = createTestUser();
         user.setEmail(null);
-        HttpEntity<User> request = new HttpEntity<>(user);
+        HttpEntity<SignUpDTO> request = new HttpEntity<>(new SignUpDTO(user.getUsername(), user.getEmail(), user.getPhone(), user.getPassword()));
         ResponseEntity<RestApiError> responce =
                 this.testRestTemplate.postForEntity(
                         String.format("http://localhost:%d/auth/signup",this.port),
@@ -172,7 +181,7 @@ public class AuthControllerTest {
     void signUpWhenPhoneIsNull() {
         final User user = createTestUser();
         user.setPhone(null);
-        HttpEntity<User> request = new HttpEntity<>(user);
+        HttpEntity<SignUpDTO> request = new HttpEntity<>(new SignUpDTO(user.getUsername(), user.getEmail(), user.getPhone(), user.getPassword()));
         ResponseEntity<String> responce =
                 this.testRestTemplate.postForEntity(
                         String.format("http://localhost:%d/auth/signup",this.port),
@@ -185,6 +194,7 @@ public class AuthControllerTest {
         assertEquals(HttpStatus.CREATED, responce.getStatusCode());
         assertEquals("ok", responce.getBody());
     }
+
     private static User createTestUser() {
         final User testUser = new User();
         testUser.setUsername("testUser");
