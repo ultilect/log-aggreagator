@@ -46,7 +46,7 @@ public class AuthController {
    ResponseEntity<?> signIn(@RequestBody final SignInDTO signIn) {
         try {
             return this.authService.signIn(signIn)
-                    .map((jwt) -> ResponseEntity.status(HttpStatus.CREATED)
+                    .map((jwt) -> ResponseEntity.status(HttpStatus.OK)
                             .header(HttpHeaders.AUTHORIZATION, jwt)
                             .body("ok"))
                     .orElseGet(() -> ResponseEntity.status(401).build());

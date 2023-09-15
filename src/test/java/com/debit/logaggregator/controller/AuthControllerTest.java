@@ -1,6 +1,7 @@
 package com.debit.logaggregator.controller;
 
 import com.debit.logaggregator.dto.RestApiError;
+import com.debit.logaggregator.dto.SignInDTO;
 import com.debit.logaggregator.dto.SignUpDTO;
 import com.debit.logaggregator.dto.UserDTO;
 import com.debit.logaggregator.entity.User;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -193,6 +195,64 @@ public class AuthControllerTest {
         }
         assertEquals(HttpStatus.CREATED, responce.getStatusCode());
         assertEquals("ok", responce.getBody());
+    }
+
+
+    //================================================================================
+    // /auth/signin endpoint tests
+    //================================================================================
+
+    @Test
+    void signInOk() {
+        final User user = createTestUser();
+        final String userPassword = "12345678";
+        user.setPassword(passwordEncoder.encode(userPassword));
+        this.userRepository.save(user);
+        HttpEntity<SignInDTO> request = new HttpEntity<>(new SignInDTO(user.getUsername(), userPassword));
+        ResponseEntity<String> responce =
+                this.testRestTemplate.postForEntity(
+                        String.format("http://localhost:%d/auth/signin",this.port),
+                        request,
+                        String.class
+                );
+        if (responce.getBody() == null) {
+            fail();
+        }
+        assertEquals(HttpStatus.OK, responce.getStatusCode());
+        assertEquals("ok", responce.getBody());
+        assertNotNull(responce.getHeaders().get(HttpHeaders.AUTHORIZATION));
+    }
+
+    @Test
+    void signInWhenBadPassword() {
+        final User user = createTestUser();
+        final String userPassword = "12345678";
+        user.setPassword(passwordEncoder.encode(userPassword));
+        this.userRepository.save(user);
+        HttpEntity<SignInDTO> request = new HttpEntity<>(new SignInDTO(user.getUsername(), "1"));
+        ResponseEntity<String> responce =
+                this.testRestTemplate.postForEntity(
+                        String.format("http://localhost:%d/auth/signin",this.port),
+                        request,
+                        String.class
+                );
+        assertEquals(HttpStatus.UNAUTHORIZED, responce.getStatusCode());
+    }
+
+    @Test
+    void signInWhenNoUser() {
+        final User user = createTestUser();
+        final String userPassword = "12345678";
+        user.setPassword(passwordEncoder.encode(userPassword));
+        this.userRepository.save(user);
+        HttpEntity<SignInDTO> request = new HttpEntity<>(new SignInDTO("1", "1"));
+        ResponseEntity<String> responce =
+                this.testRestTemplate.postForEntity(
+                        String.format("http://localhost:%d/auth/signin",this.port),
+                        request,
+                        String.class
+                );
+        assertEquals(HttpStatus.UNAUTHORIZED, responce.getStatusCode());
     }
 
     private static User createTestUser() {
