@@ -9,6 +9,7 @@ import java.util.Optional;
  * Authentication interface.
  */
 public interface AuthService {
-    boolean signUp(SignUpDTO signUpDTO);
+    Boolean signUp(SignUpDTO signUpDTO);
+
     Optional<String> signIn(SignInDTO signInDTO);
 }

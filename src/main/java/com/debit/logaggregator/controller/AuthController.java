@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -38,7 +35,7 @@ public class AuthController {
                 final RestApiError badRequestError = new RestApiError(400, "Error while signUp", "/auth/signup");
                 return ResponseEntity.status(400).body(badRequestError);
             }
-            return ResponseEntity.status(200).body("ok");
+            return ResponseEntity.status(201).body("ok");
         } catch (Exception ex) {
             final RestApiError unknownError = new RestApiError(500, ex.getMessage(), "auth/signup");
             return ResponseEntity.status(500).body(unknownError);
@@ -49,7 +46,7 @@ public class AuthController {
    ResponseEntity<?> signIn(@RequestBody final SignInDTO signIn) {
         try {
             return this.authService.signIn(signIn)
-                    .map((jwt) -> ResponseEntity.status(HttpStatus.OK)
+                    .map((jwt) -> ResponseEntity.status(HttpStatus.CREATED)
                             .header(HttpHeaders.AUTHORIZATION, jwt)
                             .body("ok"))
                     .orElseGet(() -> ResponseEntity.status(401).build());

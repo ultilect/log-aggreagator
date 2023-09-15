@@ -37,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean signUp(final SignUpDTO signUpDTO) {
+    public Boolean signUp(final SignUpDTO signUpDTO) {
         try {
             final String encodedPassword = passwordEncoder.encode(signUpDTO.password());
             //TODO: builder
