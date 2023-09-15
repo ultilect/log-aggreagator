@@ -15,6 +15,8 @@ public class User {
     private UUID id;
 
     @Column(length = 50, unique = true, nullable = false)
+    private String username;
+    @Column(length = 50, unique = true, nullable = false)
     private String email;
 
     @Column(length = 30, unique = true)
@@ -55,6 +57,14 @@ public class User {
         this.password = password;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -65,6 +75,7 @@ public class User {
         }
         final User user = (User) o;
         return Objects.equals(id, user.id)
+                && Objects.equals(username, user.username)
                 && Objects.equals(email, user.email)
                 && Objects.equals(phone, user.phone)
                 && Objects.equals(password, user.password);
@@ -72,13 +83,14 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, phone, password);
+        return Objects.hash(id, username, email, phone, password);
     }
 
     @Override
     public String toString() {
         return "User{"
                 + "id=" + id
+                + ", username='" + username + '\''
                 + ", email='" + email + '\''
                 + ", phone='" + phone + '\''
                 + ", password='" + password + '\''
