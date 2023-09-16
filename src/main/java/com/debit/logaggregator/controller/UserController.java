@@ -1,9 +1,12 @@
 package com.debit.logaggregator.controller;
 
+import com.debit.logaggregator.dto.RestApiError;
 import com.debit.logaggregator.dto.UserDTO;
 import com.debit.logaggregator.service.impl.UserService;
 import com.debit.logaggregator.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,11 +32,16 @@ public class UserController {
     }
 
     @GetMapping
-    public String getUser(final Principal principal) {
-        if (principal == null) {
-            return null;
+    public ResponseEntity<?> getUser(final Principal principal) {
+        try {
+            if (principal == null) {
+                return null;
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(this.userService.findUserByUsername(principal.getName()));
+        } catch (Exception ex) {
+            final RestApiError unknownError = new RestApiError(500, ex.getMessage(), "/user");
+            return ResponseEntity.status(500).body(unknownError);
         }
-        return principal.getName();
     }
 
     @GetMapping(path = "all", produces = APPLICATION_JSON_VALUE)

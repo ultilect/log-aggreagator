@@ -1,5 +1,6 @@
 package com.debit.logaggregator.service.impl;
 
+import com.debit.logaggregator.dto.UserDTO;
 import com.debit.logaggregator.repository.UserRepository;
 import com.debit.logaggregator.entity.User;
 import com.debit.logaggregator.security.UserDetailsImpl;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Bogdan Lesin
@@ -28,6 +30,10 @@ public class UserService implements UserDetailsService {
         return Lists.newArrayList(this.userRepository.findAll());
     }
 
+    public UserDTO findUserByUsername(final String username) throws UsernameNotFoundException {
+        return new UserDTO(userRepository.findUserByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException(String.format("User %s not found", username))));
+    }
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         final User user = userRepository.findUserByUsername(username).orElseThrow(() ->

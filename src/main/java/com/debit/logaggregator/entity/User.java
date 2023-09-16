@@ -1,7 +1,9 @@
 package com.debit.logaggregator.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -25,6 +27,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = UserUrl.class)
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties("user")
+    private List<UserUrl> userUrls;
     public UUID getId() {
         return id;
     }
@@ -63,6 +69,14 @@ public class User {
 
     public void setUsername(final String username) {
         this.username = username;
+    }
+
+    public List<UserUrl> getUserUrls() {
+        return userUrls;
+    }
+
+    public void setUserUrls(final List<UserUrl> userUrls) {
+        this.userUrls = userUrls;
     }
 
     @Override

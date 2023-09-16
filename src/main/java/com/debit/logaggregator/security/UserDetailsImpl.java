@@ -7,6 +7,7 @@ import com.debit.logaggregator.entity.User;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author Bogdan Lesin
@@ -14,18 +15,25 @@ import java.util.Objects;
 public class UserDetailsImpl implements UserDetails {
     private final String username;
     private final String password;
-    UserDetailsImpl(final String username, final String password) {
+
+    private final UUID id;
+    UserDetailsImpl(final String username, final String password, final UUID id) {
         this.username = username;
         this.password = password;
+        this.id = id;
     }
 
     public static UserDetailsImpl build(final User user) {
-        return new UserDetailsImpl(user.getUsername(), user.getPassword()) {
+        return new UserDetailsImpl(user.getUsername(), user.getPassword(), user.getId()) {
         };
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new LinkedList<>();
+    }
+
+    public UUID getId() {
+        return this.id;
     }
 
     @Override
