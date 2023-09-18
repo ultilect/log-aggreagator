@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Bogdan Lesin
@@ -30,9 +31,9 @@ public class UserService implements UserDetailsService {
         return Lists.newArrayList(this.userRepository.findAll());
     }
 
-    public UserDTO findUserByUsername(final String username) throws UsernameNotFoundException {
-        return new UserDTO(userRepository.findUserByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException(String.format("User %s not found", username))));
+    public UserDTO findUserByUserId(final UUID userId) throws UsernameNotFoundException {
+        return new UserDTO(userRepository.findById(userId).orElseThrow(() ->
+                new UsernameNotFoundException(String.format("User %s not found", userId))));
     }
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {

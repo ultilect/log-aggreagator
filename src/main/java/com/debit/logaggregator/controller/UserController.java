@@ -2,11 +2,13 @@ package com.debit.logaggregator.controller;
 
 import com.debit.logaggregator.dto.RestApiError;
 import com.debit.logaggregator.dto.UserDTO;
+import com.debit.logaggregator.security.UserDetailsImpl;
 import com.debit.logaggregator.service.impl.UserService;
 import com.debit.logaggregator.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,12 +34,17 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getUser(final Principal principal) {
+    public ResponseEntity<?> getUser() {
         try {
-            if (principal == null) {
-                return null;
+            UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+            if (user == null) {
+                final RestApiError noUserError = new RestApiError(404, "User not found", "/user");
+                return ResponseEntity.status(404).body(noUserError);
             }
-            return ResponseEntity.status(HttpStatus.OK).body(this.userService.findUserByUsername(principal.getName()));
+            return ResponseEntity.status(HttpStatus.OK).body(this.userService.findUserByUserId(user.getUserId()));
         } catch (Exception ex) {
             final RestApiError unknownError = new RestApiError(500, ex.getMessage(), "/user");
             return ResponseEntity.status(500).body(unknownError);

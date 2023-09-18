@@ -1,5 +1,6 @@
 package com.debit.logaggregator.entity;
 
+import com.debit.logaggregator.dto.UserUrlDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
@@ -95,6 +96,23 @@ public class UserUrl {
         this.user = user;
     }
 
+    public UserUrl updateWithoutId(UserUrl newData) {
+        this.setUrl(newData.getUrl());
+        this.setComment(newData.getComment());
+        this.setCreatedAt(newData.getCreatedAt());
+        this.setNextRequestTime(newData.getNextRequestTime());
+        this.setPeriodInMinutes(newData.getPeriodInMinutes());
+        this.setUser(newData.getUser());
+        return this;
+    }
+
+    public UserUrl updateWithoutId(UserUrlDTO newData) {
+        this.setUrl(newData.url());
+        this.setComment(newData.comment());
+        this.setNextRequestTime(newData.nextRequestTime());
+        this.setPeriodInMinutes(newData.periodInMinutes());
+        return this;
+    }
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

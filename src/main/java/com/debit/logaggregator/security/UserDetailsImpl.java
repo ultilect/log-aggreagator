@@ -1,8 +1,11 @@
 package com.debit.logaggregator.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.debit.logaggregator.entity.User;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -15,8 +18,8 @@ import java.util.UUID;
 public class UserDetailsImpl implements UserDetails {
     private final String username;
     private final String password;
-
     private final UUID id;
+
     UserDetailsImpl(final String username, final String password, final UUID id) {
         this.username = username;
         this.password = password;
@@ -46,6 +49,7 @@ public class UserDetailsImpl implements UserDetails {
         return this.username;
     }
 
+    public UUID getUserId() {return this.id;}
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -88,6 +92,7 @@ public class UserDetailsImpl implements UserDetails {
         return "UserDetailsImpl{"
                 + "username='" + username + '\''
                 + ", password='" + password + '\''
+                + ", id='" + id + '\''
                 + '}';
     }
 }

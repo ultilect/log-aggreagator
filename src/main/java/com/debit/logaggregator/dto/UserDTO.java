@@ -22,13 +22,13 @@ public record UserDTO(
         @JsonProperty("id") UUID id,
         @JsonProperty("username") String username,
         @JsonProperty("email") String email,
-        @JsonProperty("phone") String phone,
-        @JsonProperty("url") @JsonIgnoreProperties("user") List<UserUrl> urls
+        @JsonProperty("phone") String phone
+//        @JsonProperty("url") @JsonIgnoreProperties("user") List<UserUrl> urls
         ) {
         public UserDTO() {
-                this(UUID.randomUUID(), "test", "test@email.com", "88889988", new ArrayList<>());
+                this(UUID.randomUUID(), "test", "test@email.com", "88889988");
         }
         public UserDTO(final User user) {
-                this(user.getId(), user.getUsername(), user.getEmail(), user.getPhone(), user.getUserUrls());
+                this(user.getId(), user.getUsername(), user.getEmail(), user.getPhone());
         }
 }
