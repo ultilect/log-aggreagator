@@ -1,7 +1,13 @@
 spring:
-  config:
-    import: classpath:secret.yml
   datasource:
+    url: ${H2URL}
+    username: ${H2USER}
+    password: ${H2PASSWORD}
     driverClassName: org.h2.Driver
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+app:
+  secrets:
+    jwt:
+      secret: ${JWT_SECRET}
+      lifetime: ${JWT_LIFETIME}

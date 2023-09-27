@@ -1,14 +1,19 @@
 spring:
-  config:
-    import: optional:classpath:secret.yml
   datasource:
+    url: ${PGURL}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
     hibernate:
       ddl-auto: update
-
+app:
+  secrets:
+    jwt:
+      secret: ${JWT_SECRET}
+      lifetime: ${JWT_LIFETIME}
 logging:
   level:
     com: TRACE
