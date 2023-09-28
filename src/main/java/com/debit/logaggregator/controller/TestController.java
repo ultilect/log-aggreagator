@@ -18,11 +18,11 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 @RequestMapping("test")
 public class TestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
     @GetMapping(value = "", produces = TEXT_PLAIN_VALUE)
     public String test(final @RequestParam("name") String name) {
-        logger.info("test info");
-        logger.warn("test warn");
+        LOGGER.info("test info");
+        LOGGER.warn("test warn");
         return String.format("Hello, it is test for mister %s", name);
     }
 }

@@ -8,11 +8,13 @@ import com.debit.logaggregator.repository.UserUrlRepository;
 import com.debit.logaggregator.service.UserUrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Bogdan Lesin
+ */
 @Service
 public class UserUrlServiceImpl implements UserUrlService {
     private final UserUrlRepository userUrlRepository;
@@ -26,10 +28,10 @@ public class UserUrlServiceImpl implements UserUrlService {
     }
 
     @Override
-    public void saveEntity(UserUrlDTO entity, UUID userId) throws NoSuchElementException {
+    public void saveEntity(final UserUrlDTO entity, final UUID userId) throws NoSuchElementException {
         //TODO: test of url; Exception handling(unique fields)
-        UserUrl newUserUrl = new UserUrl();
-        User user = this.userRepository.findById(userId).orElseThrow();
+        final UserUrl newUserUrl = new UserUrl();
+        final User user = this.userRepository.findById(userId).orElseThrow();
         newUserUrl.updateWithoutId(entity);
         newUserUrl.setUser(user);
         newUserUrl.setCreatedAt(new Date());
@@ -37,12 +39,12 @@ public class UserUrlServiceImpl implements UserUrlService {
     }
 
     @Override
-    public Optional<UserUrlDTO> getEntity(UUID id, UUID userId) {
+    public Optional<UserUrlDTO> getEntity(final UUID id, final UUID userId) {
         return this.userUrlRepository.findByIdAndUserId(id, userId).map(UserUrlDTO::new);
     }
 
     @Override
-    public List<UserUrlDTO> getAll(UUID userId) {
+    public List<UserUrlDTO> getAll(final UUID userId) {
         return this.userUrlRepository
                 .findAllByUserId(userId)
                 .stream().map(UserUrlDTO::new)
@@ -50,7 +52,7 @@ public class UserUrlServiceImpl implements UserUrlService {
     }
 
     @Override
-    public Optional<UserUrlDTO> updateEntity(UUID id, UserUrlDTO newEntity, UUID userId) {
+    public Optional<UserUrlDTO> updateEntity(final UUID id, final UserUrlDTO newEntity, final UUID userId) {
         return this.userUrlRepository.findByIdAndUserId(id, userId).map((userUrl) -> {
             userUrl.updateWithoutId(newEntity);
             return new UserUrlDTO(this.userUrlRepository.save(userUrl));
@@ -58,7 +60,7 @@ public class UserUrlServiceImpl implements UserUrlService {
     }
 
     @Override
-    public void deleteEntity(UUID id, UUID userId) {
+    public void deleteEntity(final UUID id, final UUID userId) {
         this.userUrlRepository.findByIdAndUserId(id, userId).ifPresent(this.userUrlRepository::delete);
     }
 }

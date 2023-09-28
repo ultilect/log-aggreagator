@@ -17,110 +17,125 @@ import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * @author Bogdan Lesin
+ */
 @RestController
 @RequestMapping("user/url")
+@SuppressWarnings("ReturnCount")
 public class UserUrlController {
-
+    // Response common params
+    private static final String USER_NOT_FOUND_BODY = "User not found";
+    private static final String BASIC_URL = "/user/url";
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserUrlController.class);
     private final UserUrlService userUrlService;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserUrlController.class);
 
     @Autowired
-    public UserUrlController(UserUrlService userUrlService) {
+    public UserUrlController(final UserUrlService userUrlService) {
         this.userUrlService = userUrlService;
     }
 
     @GetMapping(value = "{id}", produces = APPLICATION_JSON_VALUE)
     ResponseEntity<?> getUserUrl(final @PathVariable("id") UUID id) {
-        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
+        final UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
         if (user == null) {
-            final RestApiError noUserError = new RestApiError(HttpStatus.NOT_FOUND.value(), "User not found", "/user");
-            return ResponseEntity.status(404).body(noUserError);
+            final RestApiError noUserError =
+                    new RestApiError(HttpStatus.NOT_FOUND.value(), USER_NOT_FOUND_BODY, BASIC_URL);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(noUserError);
         }
-        logger.trace("getUserUrl for username {}", user.getUsername());
+        LOGGER.trace("getUserUrl for username {}", user.getUsername());
         return this.userUrlService
                 .getEntity(id, user.getUserId()).map((userUrl) -> {
-                    logger.trace("getUserUrl successful for username {}", user.getUsername());
+                    LOGGER.trace("getUserUrl successful for username {}", user.getUsername());
                     return ResponseEntity.status(HttpStatus.OK).body(userUrl);
                 })
                 .orElseGet(() -> {
-                    logger.trace("getUserUrl url not found for username {}", user.getUsername());
+                    LOGGER.trace("getUserUrl url not found for username {}", user.getUsername());
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                 });
     }
     @GetMapping
     ResponseEntity<?> getAllUserUrl() {
-        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
+        final UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
         if (user == null) {
-            final RestApiError noUserError = new RestApiError(HttpStatus.NOT_FOUND.value(), "User not found", "/user");
-            return ResponseEntity.status(404).body(noUserError);
+            final RestApiError noUserError =
+                    new RestApiError(HttpStatus.NOT_FOUND.value(), USER_NOT_FOUND_BODY, BASIC_URL);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(noUserError);
         }
-        logger.trace("getAllUserUrl for username {}", user.getUsername());
+        LOGGER.trace("getAllUserUrl for username {}", user.getUsername());
         try {
             return ResponseEntity.ok(this.userUrlService.getAll(user.getUserId()));
         } catch (Exception ex) {
-            logger.error("getAllUserUrl unknown error for username {}", user.getUsername());
+            LOGGER.error("getAllUserUrl unknown error for username {}", user.getUsername());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     ResponseEntity<?> createUserUrl(@RequestBody final UserUrlDTO userUrlDTO) {
-        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
+        final UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
         if (user == null) {
-            final RestApiError noUserError = new RestApiError(HttpStatus.NOT_FOUND.value(), "User not found", "/user");
-            return ResponseEntity.status(404).body(noUserError);
+            final RestApiError noUserError =
+                    new RestApiError(HttpStatus.NOT_FOUND.value(), USER_NOT_FOUND_BODY, BASIC_URL);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(noUserError);
         }
-        logger.trace("createUserUrl for username {}", user.getUsername());
+        LOGGER.trace("createUserUrl for username {}", user.getUsername());
         try {
             this.userUrlService.saveEntity(userUrlDTO, user.getUserId());
-            logger.trace("createUserUrl successful for username {}", user.getUsername());
+            LOGGER.trace("createUserUrl successful for username {}", user.getUsername());
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (NoSuchElementException ex) {
-            final RestApiError error = new RestApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage(),"user/url");
-            logger.warn("createUserUrl warning: {} for username {}", ex.getMessage(), user.getUsername());
+            final RestApiError error = new RestApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage(), BASIC_URL);
+            LOGGER.warn("createUserUrl warning: {} for username {}", ex.getMessage(), user.getUsername());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
     }
 
-    @PutMapping(value = "{id}",produces = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "{id}", produces = APPLICATION_JSON_VALUE)
     ResponseEntity<?> updateUserUrl(@PathVariable("id") final UUID id, @RequestBody final UserUrlDTO userUrlDTO) {
-            UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
+            final UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
                     .getContext()
                     .getAuthentication()
                     .getPrincipal();
             if (user == null) {
-                final RestApiError noUserError = new RestApiError(HttpStatus.NOT_FOUND.value(), "User not found", "/user");
-                return ResponseEntity.status(404).body(noUserError);
+                final RestApiError noUserError =
+                        new RestApiError(HttpStatus.NOT_FOUND.value(), USER_NOT_FOUND_BODY, BASIC_URL);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(noUserError);
             }
-            logger.trace("updateUserUrl for username {}", user.getUsername());
+            LOGGER.trace("updateUserUrl for username {}", user.getUsername());
             return this.userUrlService.updateEntity(id, userUrlDTO, user.getUserId())
                     .map((userUrl) -> {
-                        logger.trace("updateUserUrl succesful for username {}", user.getUsername());
+                        LOGGER.trace("updateUserUrl succesful for username {}", user.getUsername());
                         return ResponseEntity.status(HttpStatus.OK).body(userUrl);
                     })
                     .orElseGet(() -> {
-                        logger.trace("updateUserUrl unable to update {} with id {} for username {}", userUrlDTO, id, user.getUsername());
+                        LOGGER
+                                .trace("updateUserUrl unable to update {} with id {} for username {}",
+                                        userUrlDTO,
+                                        id,
+                                        user.getUsername());
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                     });
     }
     @DeleteMapping(value = "{id}", produces = APPLICATION_JSON_VALUE)
     ResponseEntity<?> deleteUserUrl(@PathVariable("id") final UUID id) {
-        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
+        final UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
         if (user == null) {
-            final RestApiError noUserError = new RestApiError(HttpStatus.NOT_FOUND.value(), "User not found", "/user");
-            return ResponseEntity.status(404).body(noUserError);
+            final RestApiError noUserError =
+                    new RestApiError(HttpStatus.NOT_FOUND.value(), USER_NOT_FOUND_BODY, BASIC_URL);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(noUserError);
         }
         this.userUrlService.deleteEntity(id, user.getUserId());
         return ResponseEntity.status(HttpStatus.OK).build();

@@ -24,10 +24,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-logging:3.1.4")
-    implementation("org.springframework.boot:spring-boot-starter-log4j2:3.1.4")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
-    implementation("org.modelmapper:modelmapper:3.1.1")
     implementation("org.postgresql:postgresql")
     testImplementation("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -37,6 +35,22 @@ dependencies {
 }
 
 tasks.withType<Test> {
+
+    val file = File(".env")
+    if(file.canRead()) {
+        file.forEachLine {
+            val envVar = it.split("=")
+            environment(envVar[0], envVar[1])
+        }
+    } else {
+        println("No .env file\nLoading default test vars")
+        environment("H2URL", "jdbc:h2:mem:db")
+        environment("H2PASSWORD", "test")
+        environment("H2USER", "user")
+        environment("JWT_SECRET", "secret")
+        environment("JWT_LIFETIME", "1111")
+    }
+
     useJUnitPlatform()
 }
 

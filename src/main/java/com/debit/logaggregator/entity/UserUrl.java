@@ -96,7 +96,7 @@ public class UserUrl {
         this.user = user;
     }
 
-    public UserUrl updateWithoutId(UserUrl newData) {
+    public UserUrl updateWithoutId(final UserUrl newData) {
         this.setUrl(newData.getUrl());
         this.setComment(newData.getComment());
         this.setCreatedAt(newData.getCreatedAt());
@@ -106,7 +106,7 @@ public class UserUrl {
         return this;
     }
 
-    public UserUrl updateWithoutId(UserUrlDTO newData) {
+    public UserUrl updateWithoutId(final UserUrlDTO newData) {
         this.setUrl(newData.url());
         this.setComment(newData.comment());
         this.setNextRequestTime(newData.nextRequestTime());

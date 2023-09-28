@@ -13,6 +13,6 @@ import java.util.UUID;
  */
 @Repository
 public interface UserUrlRepository extends CrudRepository<UserUrl, UUID> {
-    Optional<UserUrl> findByIdAndUserId(UUID id, UUID user_id);
-    List<UserUrl> findAllByUserId(UUID user_id);
+    Optional<UserUrl> findByIdAndUserId(UUID id, UUID userId);
+    List<UserUrl> findAllByUserId(UUID userId);
 }

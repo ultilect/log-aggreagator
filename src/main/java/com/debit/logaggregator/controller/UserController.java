@@ -11,12 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +26,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping("user")
+@SuppressWarnings("ReturnCount")
 public class UserController {
+    // Response common params
+    private static final String BASIC_URL = "/user";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     public UserController(final UserService userService) {
@@ -40,26 +42,21 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUser() {
-        logger.trace("getUser request");
+        LOGGER.trace("getUser request");
         try {
-            UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
+            final UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder
                     .getContext()
                     .getAuthentication()
                     .getPrincipal();
             if (user == null) {
-                logger.trace("getUser no auth");
-                final RestApiError noUserError = new RestApiError(404, "User not found", "/user");
+                LOGGER.trace("getUser no auth");
+                final RestApiError noUserError = new RestApiError(404, "User not found", BASIC_URL);
                 return ResponseEntity.status(404).body(noUserError);
             }
-            logger.trace("successful getUser");
+            LOGGER.trace("successful getUser");
             return ResponseEntity.status(HttpStatus.OK).body(this.userService.findUserByUserId(user.getUserId()));
-        } catch (UsernameNotFoundException ex) {
-            //Beacause of auth unnecessary check
-            logger.warn("Insufficient token: {}", ex.getMessage());
-            final RestApiError noUser = new RestApiError(404, "No such user", "/user");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(noUser);
-        }catch (Exception ex) {
-            final RestApiError unknownError = new RestApiError(500, ex.getMessage(), "/user");
+        } catch (Exception ex) {
+            final RestApiError unknownError = new RestApiError(500, ex.getMessage(), BASIC_URL);
             return ResponseEntity.status(500).body(unknownError);
         }
     }

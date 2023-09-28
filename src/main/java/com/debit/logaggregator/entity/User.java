@@ -1,5 +1,6 @@
 package com.debit.logaggregator.entity;
 
+import com.debit.logaggregator.util.global.SuppressFBWarnings;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
 /**
  * Представление пользователя в БД.
  */
+@SuppressFBWarnings("DLS_DEAD_LOCAL_STORE")
 @Entity(name = "users")
 public class User {
     @Id
