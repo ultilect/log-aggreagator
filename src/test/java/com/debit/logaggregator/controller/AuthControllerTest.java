@@ -3,7 +3,6 @@ package com.debit.logaggregator.controller;
 import com.debit.logaggregator.dto.RestApiError;
 import com.debit.logaggregator.dto.SignInDTO;
 import com.debit.logaggregator.dto.SignUpDTO;
-import com.debit.logaggregator.dto.UserDTO;
 import com.debit.logaggregator.entity.User;
 import com.debit.logaggregator.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,8 +48,10 @@ public class AuthControllerTest {
                        request,
                        String.class
                 );
+        final Long userAmount = this.userRepository.count();
         assertEquals(HttpStatus.CREATED, responce.getStatusCode());
         assertEquals("ok", responce.getBody());
+        assertEquals(1, userAmount);
     }
 
     @Test
@@ -70,10 +71,12 @@ public class AuthControllerTest {
         if (responce.getBody() == null) {
             fail();
         }
+        final Long userAmount = this.userRepository.count();
         assertEquals(HttpStatus.BAD_REQUEST, responce.getStatusCode());
         assertEquals("/auth/signup", responce.getBody().path());
         assertEquals(400, responce.getBody().status());
         assertEquals("Error while signUp", responce.getBody().error());
+        assertEquals(1, userAmount);
     }
 
     @Test
@@ -93,10 +96,12 @@ public class AuthControllerTest {
         if (responce.getBody() == null) {
             fail();
         }
+        final Long userAmount = this.userRepository.count();
         assertEquals(HttpStatus.BAD_REQUEST, responce.getStatusCode());
         assertEquals("/auth/signup", responce.getBody().path());
         assertEquals(400, responce.getBody().status());
         assertEquals("Error while signUp", responce.getBody().error());
+        assertEquals(1, userAmount);
     }
 
     @Test
@@ -116,10 +121,12 @@ public class AuthControllerTest {
         if (responce.getBody() == null) {
             fail();
         }
+        final Long userAmount = this.userRepository.count();
         assertEquals(HttpStatus.BAD_REQUEST, responce.getStatusCode());
         assertEquals("/auth/signup", responce.getBody().path());
         assertEquals(400, responce.getBody().status());
         assertEquals("Error while signUp", responce.getBody().error());
+        assertEquals(1, userAmount);
     }
 
     @Test
@@ -136,10 +143,12 @@ public class AuthControllerTest {
         if (responce.getBody() == null) {
             fail();
         }
+        final Long userAmount = this.userRepository.count();
         assertEquals(HttpStatus.BAD_REQUEST, responce.getStatusCode());
         assertEquals("/auth/signup", responce.getBody().path());
         assertEquals(400, responce.getBody().status());
         assertEquals("Error while signUp", responce.getBody().error());;
+        assertEquals(0, userAmount);
     }
     @Test
     void signUpWhenUsernameIsNull() {
@@ -155,10 +164,12 @@ public class AuthControllerTest {
         if (responce.getBody() == null) {
             fail();
         }
+        final Long userAmount = this.userRepository.count();
         assertEquals(HttpStatus.BAD_REQUEST, responce.getStatusCode());
         assertEquals("/auth/signup", responce.getBody().path());
         assertEquals(400, responce.getBody().status());
         assertEquals("Error while signUp", responce.getBody().error());;
+        assertEquals(0, userAmount);
     }
     @Test
     void signUpWhenEmailIsNull() {
@@ -174,10 +185,12 @@ public class AuthControllerTest {
         if (responce.getBody() == null) {
             fail();
         }
+        final Long userAmount = this.userRepository.count();
         assertEquals(HttpStatus.BAD_REQUEST, responce.getStatusCode());
         assertEquals("/auth/signup", responce.getBody().path());
         assertEquals(400, responce.getBody().status());
         assertEquals("Error while signUp", responce.getBody().error());;
+        assertEquals(0, userAmount);
     }
     @Test
     void signUpWhenPhoneIsNull() {
@@ -193,8 +206,10 @@ public class AuthControllerTest {
         if (responce.getBody() == null) {
             fail();
         }
+        final Long userAmount = this.userRepository.count();
         assertEquals(HttpStatus.CREATED, responce.getStatusCode());
         assertEquals("ok", responce.getBody());
+        assertEquals(1, userAmount);
     }
 
 

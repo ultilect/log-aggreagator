@@ -1,8 +1,8 @@
 package com.debit.logaggregator.service.impl;
 
 import com.debit.logaggregator.dto.UserDTO;
-import com.debit.logaggregator.repository.UserRepository;
 import com.debit.logaggregator.entity.User;
+import com.debit.logaggregator.repository.UserRepository;
 import com.debit.logaggregator.security.UserDetailsImpl;
 import graphql.com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;

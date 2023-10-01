@@ -4,25 +4,20 @@ import com.debit.logaggregator.dto.UserDTO;
 import com.debit.logaggregator.entity.User;
 import com.debit.logaggregator.repository.UserRepository;
 import com.debit.logaggregator.security.JwtCore;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -61,6 +56,11 @@ public class UserControllerTest {
                 .bindToServer()
                 .baseUrl(String.format("http://localhost:%d", this.port))
                 .build();
+    }
+
+    @AfterAll
+    void clearUserRepository() {
+        userRepository.deleteAll();
     }
     //================================================================================
     // /user endpoint tests

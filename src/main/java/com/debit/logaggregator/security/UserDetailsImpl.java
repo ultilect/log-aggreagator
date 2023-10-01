@@ -1,8 +1,8 @@
 package com.debit.logaggregator.security;
 
+import com.debit.logaggregator.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.debit.logaggregator.entity.User;
 
 import java.util.Collection;
 import java.util.LinkedList;

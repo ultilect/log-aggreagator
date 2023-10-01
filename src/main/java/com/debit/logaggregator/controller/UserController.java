@@ -2,9 +2,9 @@ package com.debit.logaggregator.controller;
 
 import com.debit.logaggregator.dto.RestApiError;
 import com.debit.logaggregator.dto.UserDTO;
+import com.debit.logaggregator.entity.User;
 import com.debit.logaggregator.security.UserDetailsImpl;
 import com.debit.logaggregator.service.impl.UserService;
-import com.debit.logaggregator.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
