@@ -48,7 +48,7 @@ tasks.withType<Test> {
         environment("H2PASSWORD", "test")
         environment("H2USER", "user")
         environment("JWT_SECRET", "secret")
-        environment("JWT_LIFETIME", "1111")
+        environment("JWT_LIFETIME", "111111")
     }
 
     useJUnitPlatform()
