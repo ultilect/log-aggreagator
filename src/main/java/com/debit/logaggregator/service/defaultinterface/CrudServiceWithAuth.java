@@ -9,7 +9,7 @@ import java.util.Optional;
  * @param <E> - Authorized user id
  */
 public interface CrudServiceWithAuth<T, V, E> {
-    void saveEntity(T entity, E userId);
+    void saveEntity(T entity, E userId) throws Exception;
 
     Optional<T> getEntity(V id, E userId);
 

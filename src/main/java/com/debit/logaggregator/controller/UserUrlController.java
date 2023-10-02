@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
+import java.net.URISyntaxException;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -97,6 +99,20 @@ public class UserUrlController {
             final RestApiError error = new RestApiError(HttpStatus.NOT_FOUND.value(), ex.getMessage(), BASIC_URL);
             LOGGER.warn("createUserUrl warning: {} for username {}", ex.getMessage(), user.getUsername());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (URISyntaxException ex) {
+            final RestApiError error =
+                    new RestApiError(HttpStatus.BAD_REQUEST.value(),
+                            String.format("Bad uri for %s", userUrlDTO.url()),
+                            BASIC_URL);
+            LOGGER.warn("createUserUrl bad uri {} for username {}", userUrlDTO.url(), user.getUsername());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        } catch (HttpClientErrorException ex) {
+            final RestApiError error =
+                    new RestApiError(HttpStatus.BAD_REQUEST.value(),
+                            String.format("Error requesting uri %s", userUrlDTO.url()),
+                            BASIC_URL);
+            LOGGER.warn("createUserUrl bad uri request of {} for username {}", userUrlDTO.url(), user.getUsername());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
 

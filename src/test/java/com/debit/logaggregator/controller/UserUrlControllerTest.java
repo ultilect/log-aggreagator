@@ -1,5 +1,6 @@
 package com.debit.logaggregator.controller;
 
+import com.debit.logaggregator.client.UserUrlClient;
 import com.debit.logaggregator.dto.UserUrlDTO;
 import com.debit.logaggregator.entity.User;
 import com.debit.logaggregator.entity.UserUrl;
@@ -9,7 +10,10 @@ import com.debit.logaggregator.security.JwtCore;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +26,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 
 // Supposed the user has already logged in
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -44,6 +50,8 @@ public class UserUrlControllerTest {
     @Autowired
     private JwtCore jwtCore;
 
+    @MockBean
+    private UserUrlClient userUrlClient;
     private WebTestClient client;
     private String authUserJwt;
 
@@ -153,6 +161,8 @@ public class UserUrlControllerTest {
     void createUserUrlWhenOk() {
         final UserUrl testUserUrl = buildTestUserUrl();
         final UserUrlDTO createdUserUrl = new UserUrlDTO(testUserUrl);
+        ResponseEntity<String> r = ResponseEntity.status(HttpStatus.OK).body("ok");
+        doReturn(r).when(userUrlClient).checkUrl(any());
         final UserUrlDTO returnedUserUrlDTO = client
                 .post()
                 .uri("/user/url")
@@ -168,11 +178,13 @@ public class UserUrlControllerTest {
         assertEquals(1, userUrlAmount);
     }
 
-    //TODO: check url aviability
     @Test
     void createUserUrlWhenBadUrl() {
         final UserUrl testUserUrl = buildBadUserUrl();
         final UserUrlDTO createdUserUrl = new UserUrlDTO(testUserUrl);
+        // Must fail on creating uri
+        ResponseEntity<String> r = ResponseEntity.status(HttpStatus.OK).body("ok");
+        doReturn(r).when(userUrlClient).checkUrl(any());
         client
                 .post()
                 .uri("/user/url")
@@ -185,6 +197,23 @@ public class UserUrlControllerTest {
     }
 
     @Test
+    void createUserUrlWhenUrlUnavailable() {
+        final UserUrl testUserUrl = buildTestUserUrl();
+        final UserUrlDTO createdUserUrl = new UserUrlDTO(testUserUrl);
+        ResponseEntity<String> r = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        doReturn(r).when(userUrlClient).checkUrl(any());
+        client
+                .post()
+                .uri("/user/url")
+                .header("Authorization", String.format("Bearer %s", authUserJwt))
+                .bodyValue(createdUserUrl)
+                .exchange()
+                .expectStatus().isBadRequest();
+        final Long userUrlAmount = this.userUrlRepository.count();
+        assertEquals(0, userUrlAmount);
+    }
+
+        @Test
     void updateUserUrlWhenOk() {
         final UserUrl testUserUrl = buildTestUserUrl();
         final User user = this.userRepository.findUserByUsername("createdUser").orElseThrow();
