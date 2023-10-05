@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -158,7 +159,7 @@ public class UserUrlControllerTest {
 
     //TODO: Return userurl in service
     @Test
-    void createUserUrlWhenOk() {
+    void createUserUrlWhenOk() throws UnknownHostException {
         final UserUrl testUserUrl = buildTestUserUrl();
         final UserUrlDTO createdUserUrl = new UserUrlDTO(testUserUrl);
         ResponseEntity<String> r = ResponseEntity.status(HttpStatus.OK).body("ok");
@@ -174,12 +175,15 @@ public class UserUrlControllerTest {
                 .returnResult()
                 .getResponseBody();
         final Long userUrlAmount = this.userUrlRepository.count();
-        assertEquals(createdUserUrl, returnedUserUrlDTO);
+        assertEquals(createdUserUrl.url(), returnedUserUrlDTO.url());
+        assertEquals(createdUserUrl.comment(), returnedUserUrlDTO.comment());
+        assertEquals(createdUserUrl.nextRequestTime(), returnedUserUrlDTO.nextRequestTime());
+        assertEquals(createdUserUrl.periodInMinutes(), returnedUserUrlDTO.periodInMinutes());
         assertEquals(1, userUrlAmount);
     }
 
     @Test
-    void createUserUrlWhenBadUrl() {
+    void createUserUrlWhenBadUrl() throws UnknownHostException {
         final UserUrl testUserUrl = buildBadUserUrl();
         final UserUrlDTO createdUserUrl = new UserUrlDTO(testUserUrl);
         // Must fail on creating uri
@@ -197,7 +201,7 @@ public class UserUrlControllerTest {
     }
 
     @Test
-    void createUserUrlWhenUrlUnavailable() {
+    void createUserUrlWhenUrlUnavailable() throws UnknownHostException {
         final UserUrl testUserUrl = buildTestUserUrl();
         final UserUrlDTO createdUserUrl = new UserUrlDTO(testUserUrl);
         ResponseEntity<String> r = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -214,12 +218,14 @@ public class UserUrlControllerTest {
     }
 
         @Test
-    void updateUserUrlWhenOk() {
+    void updateUserUrlWhenOk() throws UnknownHostException {
         final UserUrl testUserUrl = buildTestUserUrl();
         final User user = this.userRepository.findUserByUsername("createdUser").orElseThrow();
         testUserUrl.setUser(user);
         this.userUrlRepository.save(testUserUrl);
         testUserUrl.setUrl("https://google.com");
+        ResponseEntity<String> r = ResponseEntity.status(HttpStatus.OK).build();
+        doReturn(r).when(userUrlClient).checkUrl(any());
         final UserUrlDTO updatedUserUrlDTO = new UserUrlDTO(testUserUrl);
         final UserUrlDTO returnedUserUrlDTO = client
                 .put()
@@ -236,12 +242,14 @@ public class UserUrlControllerTest {
 
 
     @Test
-    void updateUserUrlWhenBadNewUrl() {
+    void updateUserUrlWhenBadNewUrl() throws UnknownHostException{
         final UserUrl testUserUrl = buildTestUserUrl();
         final User user = this.userRepository.findUserByUsername("createdUser").orElseThrow();
         testUserUrl.setUser(user);
         this.userUrlRepository.save(testUserUrl);
         testUserUrl.setUrl("Bad url");
+        ResponseEntity<String> r = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        doReturn(r).when(userUrlClient).checkUrl(any());
         final UserUrlDTO updatedUserUrlDTO = new UserUrlDTO(testUserUrl);
         client
                 .put()
@@ -254,13 +262,15 @@ public class UserUrlControllerTest {
 
 
     @Test
-    void updateUserUrlWhenBadUrlId() {
+    void updateUserUrlWhenBadUrlId() throws UnknownHostException {
         final UserUrl testUserUrl = buildTestUserUrl();
         final User user = this.userRepository.findUserByUsername("createdUser").orElseThrow();
         testUserUrl.setUser(user);
         this.userUrlRepository.save(testUserUrl);
         final UserUrlDTO updatedUserUrlDTO = new UserUrlDTO(testUserUrl);
         final UUID randomUUID = UUID.randomUUID();
+        ResponseEntity<String> r = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        doReturn(r).when(userUrlClient).checkUrl(any());
         client
                 .put()
                 .uri(String.format("/user/url/%s", randomUUID))

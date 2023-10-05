@@ -7,14 +7,7 @@ import com.debit.logaggregator.entity.UserUrl;
 import com.debit.logaggregator.repository.UserRepository;
 import com.debit.logaggregator.repository.UserUrlRepository;
 import com.debit.logaggregator.service.UserUrlService;
-import feign.Feign;
-import feign.Target;
-import feign.codec.Decoder;
-import feign.form.spring.SpringFormEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.FeignClientProperties;
-import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,9 +23,9 @@ import java.util.stream.Collectors;
  * @author Bogdan Lesin
  */
 @Service
-@Import(FeignClientProperties.FeignClientConfiguration.class)
-@SuppressWarnings("ClassDataAbstractionCoupling")
+@SuppressWarnings({"ClassDataAbstractionCoupling", "PMD.PreserveStackTrace"})
 public class UserUrlServiceImpl implements UserUrlService {
+    private static final String BAD_URL_RESPONSE = "Bad url";
     private final UserUrlRepository userUrlRepository;
     private final UserRepository userRepository;
 
@@ -39,30 +33,28 @@ public class UserUrlServiceImpl implements UserUrlService {
 
     @Autowired
     public UserUrlServiceImpl(final UserUrlRepository userUrlRepository,
-                              final UserRepository userRepository) {
+                              final UserRepository userRepository,
+                              final UserUrlClient userUrlClient) {
         this.userUrlRepository = userUrlRepository;
         this.userRepository = userRepository;
-        this.userUrlClient = Feign.builder()
-                .encoder(new SpringFormEncoder())
-                .decoder(new ResponseEntityDecoder(new Decoder.Default()))
-                .target(Target.EmptyTarget.create(UserUrlClient.class));
+        this.userUrlClient = userUrlClient;
     }
 
     @Override
-    public void saveEntity(final UserUrlDTO entity, final UUID userId)
-            throws NoSuchElementException, URISyntaxException {
+    public Optional<UserUrlDTO> saveEntity(final UserUrlDTO entity, final UUID userId)
+            throws NoSuchElementException, URISyntaxException, UnknownHostException {
         //TODO: Exception handling(unique fields)
-        final URI userUri = new URI(entity.url());
-        final ResponseEntity<?> uriResponce = this.userUrlClient.checkUrl(userUri);
-        if (uriResponce.getStatusCode() != HttpStatus.OK) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        final boolean checkUri = checkURIAndResponse(entity.url());
+        if (!checkUri) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, BAD_URL_RESPONSE);
         }
         final UserUrl newUserUrl = new UserUrl();
         final User user = this.userRepository.findById(userId).orElseThrow();
         newUserUrl.updateWithoutId(entity);
         newUserUrl.setUser(user);
         newUserUrl.setCreatedAt(new Date());
-        this.userUrlRepository.save(newUserUrl);
+        final UserUrl userUrl = this.userUrlRepository.save(newUserUrl);
+        return Optional.of(new UserUrlDTO(userUrl));
     }
 
     @Override
@@ -80,7 +72,16 @@ public class UserUrlServiceImpl implements UserUrlService {
 
     @Override
     public Optional<UserUrlDTO> updateEntity(final UUID id, final UserUrlDTO newEntity, final UUID userId) {
+
         return this.userUrlRepository.findByIdAndUserId(id, userId).map((userUrl) -> {
+            try {
+                final boolean checkUrl = checkURIAndResponse(newEntity.url());
+                if (!checkUrl) {
+                    throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, BAD_URL_RESPONSE);
+                }
+            } catch (Exception e) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, BAD_URL_RESPONSE);
+            }
             userUrl.updateWithoutId(newEntity);
             return new UserUrlDTO(this.userUrlRepository.save(userUrl));
         });
@@ -89,5 +90,11 @@ public class UserUrlServiceImpl implements UserUrlService {
     @Override
     public void deleteEntity(final UUID id, final UUID userId) {
         this.userUrlRepository.findByIdAndUserId(id, userId).ifPresent(this.userUrlRepository::delete);
+    }
+
+    private boolean checkURIAndResponse(final String uri) throws URISyntaxException, UnknownHostException {
+        final URI userUri = new URI(uri);
+        final ResponseEntity<?> uriResponse = this.userUrlClient.checkUrl(userUri);
+        return uriResponse.getStatusCode() == HttpStatus.OK;
     }
 }
